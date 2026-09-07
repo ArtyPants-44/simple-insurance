@@ -2,6 +2,8 @@
 import Cta from "./Cta.astro";
 import Brand from "./Brand.astro";
 
+const base = import.meta.env.BASE_URL;
+
 /* Step 1 copy is taken verbatim from the live site. Steps 2 and 3 are only
    rendered on the live site once the stepper is advanced, so they didn't come
    through in the scrape — the copy below is written to match the voice.
@@ -11,21 +13,21 @@ const steps = [
     n: "01",
     title: "Tell us about your business.",
     body: "Give us the details of your business and what you need covered. We'll ask what's relevant to you — nothing more, nothing less — so the cover we find actually fits.",
-    image: "/images/how-consult.jpg",
+    image: `${base}images/how-consult.jpg`,
     alt: "Broker walking a business owner through her cover options",
   },
   {
     n: "02",
     title: "We do the legwork.",
     body: "We take your details to the market and compare cover across the insurers and underwriters we access — then come back with options in plain language, not a stack of PDFs.",
-    image: "/images/how-legwork.jpg",
+    image: `${base}images/how-legwork.jpg`,
     alt: "Broker comparing policy options",
   },
   {
     n: "03",
     title: "You're covered.",
     body: "Once you're happy, we put the cover in place and send you a summary you can actually read. Same people every time — including at claim time.",
-    image: "/images/how-covered.jpg",
+    image: `${base}images/how-covered.jpg`,
     alt: "Business owner back at work, covered",
   },
 ];

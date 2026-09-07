@@ -1,5 +1,6 @@
 ---
 import Brand from "./Brand.astro";
+const base = import.meta.env.BASE_URL;
 ---
 
 <section class="promise section" id="promise">
@@ -41,7 +42,7 @@ import Brand from "./Brand.astro";
         </svg>
       </span>
       <img
-        src="/images/promise-tradespeople.jpg"
+        src={`${base}images/promise-tradespeople.jpg`}
         alt="Tradespeople reviewing plans on site"
         width="1008" height="1200" loading="lazy" decoding="async"
       />

@@ -1,11 +1,12 @@
 ---
 import ContactForm from "./ContactForm.astro";
 import Icon from "./Icon.astro";
+const base = import.meta.env.BASE_URL;
 ---
 
 <section class="ctap" id="contact">
   <div class="ctap__media" aria-hidden="true">
-    <img src="/images/cta-warehouse.jpg" alt="" data-parallax="0.1" loading="lazy" decoding="async" />
+    <img src={`${base}images/cta-warehouse.jpg`} alt="" data-parallax="0.1" loading="lazy" decoding="async" />
     <div class="ctap__scrim"></div>
   </div>
 
