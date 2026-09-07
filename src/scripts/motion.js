@@ -144,42 +144,115 @@ function initNav() {
   }
 }
 
-/* ---------- 5. How-it-works stepper ---------- */
+/* ---------- 5. How-it-works scroll carousel ---------- */
+/* The section ships as a plain stacked list. Where there is room for it — a
+   wide enough, tall enough viewport, and motion is welcome — we pin the stage
+   to the viewport and let scroll position pick the step, with the outgoing and
+   incoming shots peeking from the corners. */
 function initStepper() {
   const root = document.querySelector("[data-stepper]");
   if (!root) return;
 
+  const track = root.querySelector("[data-step-track]");
+  const slides = [...root.querySelectorAll("[data-step-slide]")];
   const triggers = [...root.querySelectorAll("[data-step-trigger]")];
-  const panels = [...root.querySelectorAll("[data-step-panel]")];
-  const shots = [...root.querySelectorAll("[data-step-image]")];
+  const prevImgs = [...root.querySelectorAll(".hiw__peek--prev .hiw__peek-img")];
+  const nextImgs = [...root.querySelectorAll(".hiw__peek--next .hiw__peek-img")];
 
-  const select = (index) => {
-    triggers.forEach((t, i) => {
-      t.classList.toggle("is-active", i === index);
-      t.setAttribute("aria-selected", String(i === index));
+  const n = slides.length;
+  if (!track || !n) return;
+
+  root.style.setProperty("--hiw-steps", String(n));
+
+  let current = -1;
+
+  const select = (i) => {
+    if (i === current) return;
+    current = i;
+
+    slides.forEach((s, k) => s.classList.toggle("is-active", k === i));
+    triggers.forEach((t, k) => {
+      t.classList.toggle("is-active", k === i);
+      if (k === i) t.setAttribute("aria-current", "step");
+      else t.removeAttribute("aria-current");
     });
-    panels.forEach((p, i) => p.classList.toggle("is-active", i === index));
-    shots.forEach((s, i) => s.classList.toggle("is-active", i === index));
+
+    // Corner cards wrap around so both are always filled.
+    const prev = (i - 1 + n) % n;
+    const next = (i + 1) % n;
+    prevImgs.forEach((im, k) => im.classList.toggle("is-active", k === prev));
+    nextImgs.forEach((im, k) => im.classList.toggle("is-active", k === next));
+  };
+
+  const runway = () => track.offsetHeight - window.innerHeight;
+
+  let pinned = false;
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    if (!pinned) return;
+    const total = runway();
+    if (total <= 0) return;
+    const scrolled = Math.min(Math.max(-track.getBoundingClientRect().top, 0), total);
+    select(Math.min(n - 1, Math.floor((scrolled / total) * n)));
+  };
+
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  };
+
+  // Pinning a full viewport is only worth it with the room to show it, and
+  // never against the user's motion preference.
+  const canPin = () =>
+    !reduced &&
+    window.matchMedia("(min-width: 901px)").matches &&
+    window.matchMedia("(min-height: 620px)").matches;
+
+  const setMode = () => {
+    const want = canPin();
+    if (want === pinned) return;
+    pinned = want;
+    root.classList.toggle("is-pinned", pinned);
+
+    if (pinned) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      current = -1;
+      update();
+      if (current === -1) select(0);
+    } else {
+      window.removeEventListener("scroll", onScroll);
+      // Stacked again: every step stands on its own, so drop the selection.
+      slides.forEach((s) => s.classList.remove("is-active"));
+      current = -1;
+    }
   };
 
   triggers.forEach((t, i) => {
-    t.addEventListener("click", () => select(i));
-    t.addEventListener("mouseenter", () => select(i));
-    t.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-        e.preventDefault();
-        const next = (i + 1) % triggers.length;
-        triggers[next].focus(); select(next);
+    t.addEventListener("click", () => {
+      if (!pinned) {
+        slides[i].scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
       }
-      if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-        e.preventDefault();
-        const prev = (i - 1 + triggers.length) % triggers.length;
-        triggers[prev].focus(); select(prev);
-      }
+      const total = runway();
+      if (total <= 0) return;
+      const top = track.getBoundingClientRect().top + window.scrollY;
+      // Aim for the middle of that step's band so it does not sit on a seam.
+      window.scrollTo({ top: top + ((i + 0.5) / n) * total, behavior: "smooth" });
     });
   });
 
-  select(0);
+  setMode();
+  window.addEventListener(
+    "resize",
+    () => {
+      setMode();
+      onScroll();
+    },
+    { passive: true }
+  );
 }
 
 /* ---------- 6. Counter roll-up for Our Numbers ---------- */
