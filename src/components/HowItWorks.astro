@@ -2,7 +2,12 @@
 import Cta from "./Cta.astro";
 import Brand from "./Brand.astro";
 
-const base = import.meta.env.BASE_URL;
+/* Imported rather than referenced out of public/, so Vite emits them with a
+   content hash in the filename. Swapping a photo then changes its URL, and
+   nobody — us or the client — gets served a stale one out of cache. */
+import consultImg from "../assets/how-consult.jpg";
+import legworkImg from "../assets/how-legwork.jpg";
+import coveredImg from "../assets/how-covered.jpg";
 
 /* Step 1 copy is taken verbatim from the live site. Steps 2 and 3 are only
    rendered on the live site once the stepper is advanced, so they didn't come
@@ -13,21 +18,21 @@ const steps = [
     n: "01",
     title: "Tell us about your business.",
     body: "Give us the details of your business and what you need covered. We'll ask what's relevant to you — nothing more, nothing less — so the cover we find actually fits.",
-    image: `${base}images/how-consult.jpg`,
+    image: consultImg,
     alt: "Broker walking a business owner through her cover options",
   },
   {
     n: "02",
     title: "We do the legwork.",
     body: "We take your details to the market and compare cover across the insurers and underwriters we access — then come back with options in plain language, not a stack of PDFs.",
-    image: `${base}images/how-legwork.jpg`,
+    image: legworkImg,
     alt: "Broker comparing policy options",
   },
   {
     n: "03",
     title: "You're covered.",
     body: "Once you're happy, we put the cover in place and send you a summary you can actually read. Same people every time — including at claim time.",
-    image: `${base}images/how-covered.jpg`,
+    image: coveredImg,
     alt: "Business owner back at work, covered",
   },
 ];
@@ -55,9 +60,9 @@ const steps = [
           <div class="hiw__slide" data-step-slide>
             <figure class="hiw__card" data-step-card>
               <img
-                src={s.image}
+                src={s.image.src}
                 alt={s.alt}
-                width="724" height="1000"
+                width={s.image.width} height={s.image.height}
                 loading="lazy" decoding="async"
               />
             </figure>
