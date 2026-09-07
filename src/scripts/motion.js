@@ -177,19 +177,40 @@ function initStepper() {
   const measure = () => {
     const fw = frame.clientWidth;
     const fh = frame.clientHeight;
+    if (!fw || !fh) return (geom = null);
+
+    const gap =
+      parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--gutter")) || 32;
+
+    // Start from the height-driven size the stylesheet asks for...
+    root.style.removeProperty("--hiw-card-h");
+    const wantW = cards[0].offsetWidth;
+    const wantH = cards[0].offsetHeight;
+    if (!wantW || !wantH) return (geom = null);
+
+    // ...then pull it in if a centred card that size would run into the copy
+    // column. Narrow desktops have the height for it but not the width.
+    const availW = fw - 2 * (copies[0].offsetWidth + gap);
+    if (wantW > availW && availW > 0) {
+      root.style.setProperty("--hiw-card-h", (wantH * (availW / wantW)).toFixed(1) + "px");
+    }
+
     const cw = cards[0].offsetWidth;
     const ch = cards[0].offsetHeight;
-    if (!fw || !fh || !cw || !ch) return (geom = null);
-    // A card is centred on the frame, so a station offset is the distance
-    // from that centre to where the shrunken card's own centre should land.
+    if (!cw || !ch) return (geom = null);
+
+    // Stations hang off the centred card rather than the frame corners, so the
+    // thumbs stay beside the main image instead of drifting to the far edges on
+    // wide screens: tucked just outside it, and flush with its top/bottom edge.
     const halfW = (cw * CORNER_SCALE) / 2;
     const halfH = (ch * CORNER_SCALE) / 2;
-    geom = {
-      tlx: halfW - fw / 2,
-      tly: halfH - fh / 2,
-      brx: fw / 2 - halfW,
-      bry: fh / 2 - halfH,
-    };
+    // ...but never outside the frame itself.
+    const limX = fw / 2 - halfW;
+    const limY = fh / 2 - halfH;
+    const offX = Math.min(cw / 2 + gap + halfW, limX);
+    const offY = Math.min(ch / 2 - halfH, limY);
+
+    geom = { tlx: -offX, tly: -offY, brx: offX, bry: offY };
   };
 
   let current = -1;
@@ -275,12 +296,16 @@ function initStepper() {
     requestAnimationFrame(update);
   };
 
+  // Card, copy column and both thumbs have to sit side by side, so this wants
+  // real width — below it the stacked list is the better layout, not a
+  // degraded one.
   const canPin = () =>
     !reduced &&
-    window.matchMedia("(min-width: 901px)").matches &&
-    window.matchMedia("(min-height: 620px)").matches;
+    window.matchMedia("(min-width: 1100px)").matches &&
+    window.matchMedia("(min-height: 680px)").matches;
 
   const clearInline = () => {
+    root.style.removeProperty("--hiw-card-h");
     [...cards, ...copies].forEach((el) => {
       el.style.transform = "";
       el.style.opacity = "";
