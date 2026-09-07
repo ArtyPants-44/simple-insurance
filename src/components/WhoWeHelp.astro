@@ -1,0 +1,162 @@
+---
+import Brand from "./Brand.astro";
+import Icon from "./Icon.astro";
+
+/* Six live industries mapped onto the tile design.
+   All supplied exports except `briefcase` — see IMAGE-MANIFEST.md. */
+const industries = [
+  { label: "Consultants & Advisory Professionals", icon: "briefcase" },
+  { label: "Construction Consultants & Professionals", icon: "construction" },
+  { label: "Commercial Property Owners & Landlords", icon: "commercial-property" },
+  { label: "Real Estate Agencies & Property Managers", icon: "house" },
+  { label: "Not-for-Profits & Associations", icon: "charity" },
+  { label: "Mining & Resources Professionals", icon: "mining" },
+];
+---
+
+<section class="wwh section" id="who-we-help">
+  <div class="container wwh__grid">
+    <div class="wwh__copy">
+      <p class="eyebrow wwh__eyebrow" data-reveal style="--i:0">
+        Who We Help
+        <Brand variant="leaves" height={26} />
+      </p>
+
+      <h2 class="h2 wwh__title" data-reveal style="--i:1">
+        <span>Industry led.</span>
+        <em>Specific to your business needs &amp; cover.</em>
+      </h2>
+
+      <p class="wwh__body" data-reveal style="--i:2">
+        Whatever you do, cover is built around your business — not a
+        one-size-fits-all policy.
+      </p>
+
+      <a href="#contact" class="link-arrow wwh__link" data-reveal style="--i:3">
+        Talk to a broker
+        <Icon name="arrow-up-right" size={24} />
+      </a>
+    </div>
+
+    <ul class="wwh__tiles">
+      {industries.map((item, i) => (
+        <li data-reveal="scale" style={`--i:${i}`}>
+          <a href="#contact" class="tile">
+            <span class="tile__arrow" aria-hidden="true">
+              <Icon name="arrow-up-right" size={34} />
+            </span>
+            <span class="tile__icon" aria-hidden="true">
+              <Icon name={item.icon} size={40} stroke={2} />
+            </span>
+            <span class="tile__label">{item.label}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .wwh { background: var(--c-primary-800); color: var(--c-white); }
+
+  .wwh__grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.8fr) 1.5fr;
+    gap: clamp(32px, 5vw, 72px);
+  }
+
+  .wwh__eyebrow { color: var(--c-white); margin-bottom: clamp(40px, 6vw, 88px); }
+  .wwh__eyebrow :global(svg) { color: var(--c-primary-500); }
+
+  .wwh__title span,
+  .wwh__title em { display: block; font-style: normal; }
+  .wwh__title em { color: var(--c-primary-500); }
+
+  .wwh__body {
+    max-width: 34ch;
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .wwh__link { margin-top: 32px; color: var(--c-white); }
+
+  /* ---- Tiles ---- */
+  .wwh__tiles {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 18px;
+    height: 100%;
+    min-height: 296px;
+    padding: 28px;
+    border-radius: var(--radius-card);
+    background: var(--c-primary-600);
+    color: var(--c-white);
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform var(--dur-mid) var(--ease-out),
+                box-shadow var(--dur-mid) var(--ease-out);
+  }
+  /* green wash sweeps up from the bottom on hover */
+  .tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(160deg, var(--c-primary-500), var(--c-spring-20));
+    opacity: 0;
+    transform: translateY(28%);
+    transition: opacity var(--dur-mid) var(--ease-out),
+                transform var(--dur-mid) var(--ease-out);
+  }
+  .tile:hover, .tile:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: 0 26px 50px -30px rgba(0, 0, 0, 0.9);
+  }
+  .tile:hover::before, .tile:focus-visible::before { opacity: 1; transform: none; }
+
+  .tile__arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    color: var(--c-primary-400);
+    transition: transform var(--dur-mid) var(--ease-out),
+                color var(--dur-mid) var(--ease-out);
+  }
+  .tile:hover .tile__arrow {
+    transform: translate(4px, -4px);
+    color: var(--c-white);
+  }
+
+  .tile__icon {
+    display: block;
+    color: var(--c-white);
+    transition: transform var(--dur-mid) var(--ease-out);
+  }
+  .tile:hover .tile__icon { transform: translateY(-4px); }
+
+  .tile__label {
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: clamp(17px, 1.4vw, 20px);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 1080px) {
+    .wwh__grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px) {
+    .wwh__tiles { grid-template-columns: 1fr; gap: 16px; }
+    .tile { min-height: 208px; }
+  }
+</style>

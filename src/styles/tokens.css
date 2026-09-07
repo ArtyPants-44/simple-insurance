@@ -1,0 +1,126 @@
+/* ============================================================
+   Simple Insurance — Design Tokens
+   Values pulled directly from Figma file RAMYl72ZGjXuliok58iQKF
+   (design system - dev → color-tokens / typography)
+   Do not hand-edit colours here; re-export from Figma variables.
+   ============================================================ */
+
+:root {
+  /* ---- Primary (Sage Green) ---- */
+  --c-primary-100: #f0fef8;
+  --c-primary-200: #defff1;
+  --c-primary-300: #c0f4de;
+  --c-primary-400: #91ddb9;
+  --c-primary-500: #59bf7a; /* default brand green */
+  --c-primary-600: #316a44;
+  --c-primary-700: #21472d;
+  --c-primary-800: #193522;
+  --c-primary-900: #102317;
+  --c-primary-1000: #08120b;
+  --c-spring-20: #1b4d3e;
+
+  /* ---- Secondary (CTA red) ---- */
+  --c-secondary-100: #fdf0ee;
+  --c-secondary-200: #fbcdc9;
+  --c-secondary-300: #ffa19a;
+  --c-secondary-400: #ff6f64;
+  --c-secondary-500: #e93224;
+  --c-secondary-600: #c52418;
+  --c-secondary-700: #9a1910;
+  --c-secondary-800: #6a100b;
+  --c-secondary-900: #4c0d09;
+  --c-secondary-1000: #270604;
+
+  /* ---- Neutral (cool blue-grey — NOT plain grey) ---- */
+  --c-neutral-100: #ebf4f5;
+  --c-neutral-200: #d4e7e9;
+  --c-neutral-300: #cbe2e5;
+  --c-neutral-400: #b0d7dc;
+  --c-neutral-500: #6a9ba7;
+  --c-neutral-600: #4e7d8a;
+  --c-neutral-700: #35606e;
+  --c-neutral-800: #1a2a39;
+  --c-neutral-900: #0d151d;
+  --c-neutral-1000: #05080b;
+  --c-white: #ffffff;
+
+  /* ---- Type families ---- */
+  --font-primary: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* ---- Type scale (px values from Figma size/type/*) ---- */
+  --size-display: 88px;
+  --size-h1: 64px;
+  --size-h2: 48px;
+  --size-h3: 32px;
+  --size-h4: 24px;
+  --size-body-large: 18px;
+  --size-body: 16px;
+  --size-body-sm: 14px;
+
+  /* ---- Tracking (Figma letterSpacing, negative on headings) ---- */
+  --track-display: -4px;
+  --track-h1: -3px;
+  --track-h2: -2px;
+  --track-h3: -1px;
+  --track-h4: -0.5px;
+
+  --lh-heading: 1.1;
+  --lh-h4: 1.3;
+  --lh-body: 1.5;
+
+  --weight-heading: 800; /* Manrope ExtraBold */
+  --weight-h4: 700;
+
+  /* ---- Radius ---- */
+  --radius-cta: 8px;
+  --radius-nav: 12px;
+  --radius-md: 16px;
+  --radius-card: 24px;
+  --radius-xl: 48px;
+  --radius-full: 9999px;
+
+  /* ---- CTA button spec ---- */
+  --cta-font-size: 16px;
+  --cta-weight: 700;
+  --cta-gap: 12px;
+  --cta-pad-x: 14px;
+  --cta-pad-y: 8px;
+
+  /* ---- Nav spec ---- */
+  --nav-link-size: 17px;
+  --nav-link-weight: 600;
+  --nav-gap: 26px;
+
+  /* ---- Layout ---- */
+  --container: 1280px;
+  --gutter: 32px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 240ms;
+  --dur-mid: 520ms;
+  --dur-slow: 900ms;
+
+  /* CTA hover — Figma button/CTA-primary-02, Smart animate,
+     "Ease in and out" @ 800ms */
+  --ease-cta: cubic-bezier(0.42, 0, 0.58, 1);
+  --dur-cta: 800ms;
+  --cta-sweep-angle: -3.5deg;
+}
+
+/* Fluid heading sizes — the Figma values are the 1440px ceiling. */
+@media (max-width: 1200px) {
+  :root {
+    --size-display: clamp(44px, 7.2vw, 88px);
+    --size-h1: clamp(36px, 5.4vw, 64px);
+    --size-h2: clamp(30px, 4.2vw, 48px);
+    --size-h3: clamp(24px, 3vw, 32px);
+    --track-display: -0.045em;
+    --track-h1: -0.045em;
+    --track-h2: -0.04em;
+    --track-h3: -0.03em;
+    --gutter: 24px;
+  }
+}

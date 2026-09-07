@@ -1,0 +1,213 @@
+@import "./tokens.css";
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--c-neutral-900);
+  background: var(--c-white);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img, svg, video { display: block; max-width: 100%; }
+button, input, textarea, select { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- Layout ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section { padding-block: clamp(72px, 9vw, 140px); position: relative; }
+
+/* ---------- Typography ---------- */
+.display, .h1, .h2, .h3 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-heading);
+  text-wrap: balance;
+}
+.display { font-size: var(--size-display); letter-spacing: var(--track-display); }
+.h1 { font-size: var(--size-h1); letter-spacing: var(--track-h1); }
+.h2 { font-size: var(--size-h2); letter-spacing: var(--track-h2); }
+.h3 { font-size: var(--size-h3); letter-spacing: var(--track-h3); }
+.h4 {
+  font-family: var(--font-primary);
+  font-weight: var(--weight-h4);
+  font-size: var(--size-h4);
+  line-height: var(--lh-h4);
+  letter-spacing: var(--track-h4);
+}
+.body-lg { font-size: var(--size-body-large); }
+.body-sm { font-size: var(--size-body-sm); }
+
+/* Eyebrow label — "OUR MISSION", "HOW IT WORKS" etc. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.eyebrow svg { flex: none; }
+
+/* ---------- Primary CTA ----------
+   Figma: button/CTA-primary-02. Default secondary-500 with a white label.
+   On hover the fill sweeps up on a slight angle to secondary-200 while a
+   second primary-900 label cross-fades in over the white one — both on
+   the same 800ms ease-in-out, so the text arrives with the colour.
+   No arrow, and the box never changes size. */
+.cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 26px;
+  border: 0;
+  border-radius: var(--radius-cta);
+  background: var(--c-secondary-500);
+  font-family: var(--font-body);
+  font-size: var(--cta-font-size);
+  font-weight: var(--cta-weight);
+  line-height: 1.25;
+  white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Oversized so the rotation can't expose a corner as it travels. */
+.cta::before {
+  content: "";
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  bottom: 0;
+  height: 240%;
+  z-index: -1;
+  background: var(--c-secondary-200);
+  transform: translateY(115%) rotate(var(--cta-sweep-angle));
+  transform-origin: 50% 0%;
+  transition: transform var(--dur-cta) var(--ease-cta);
+}
+
+/* Two labels stacked in the same grid cell — identical text, so the
+   button width is set once and never shifts. */
+.cta__label { position: relative; display: grid; }
+.cta__label > span {
+  grid-area: 1 / 1;
+  transition: opacity var(--dur-cta) var(--ease-cta);
+}
+.cta__label-base { color: var(--c-white); opacity: 1; }
+.cta__label-hover { color: var(--c-primary-900); opacity: 0; }
+
+.cta:hover::before, .cta:focus-visible::before {
+  transform: translateY(10%) rotate(var(--cta-sweep-angle));
+}
+.cta:hover .cta__label-base, .cta:focus-visible .cta__label-base { opacity: 0; }
+.cta:hover .cta__label-hover, .cta:focus-visible .cta__label-hover { opacity: 1; }
+
+/* ---------- Secondary link with travelling arrow ---------- */
+.link-arrow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.link-arrow::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+.link-arrow:hover::after, .link-arrow:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.link-arrow svg {
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+.link-arrow:hover svg, .link-arrow:focus-visible svg {
+  transform: translate(3px, -3px);
+}
+
+/* ---------- Glass link used over the hero image ---------- */
+.glass-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-radius: var(--radius-cta);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--c-white);
+  font-weight: 600;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.glass-link svg { transition: transform var(--dur-mid) var(--ease-out); }
+.glass-link:hover { background: rgba(255, 255, 255, 0.24); }
+.glass-link:hover svg { transform: translate(3px, -3px); }
+
+/* ---------- Scroll reveal ----------
+   Elements start offset + transparent; .is-visible is added by the
+   IntersectionObserver in scripts/motion.js. Children stagger via
+   --i set inline. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+[data-reveal].is-visible { opacity: 1; transform: none; }
+
+[data-reveal="scale"] { transform: translateY(28px) scale(0.96); }
+[data-reveal="scale"].is-visible { transform: none; }
+
+[data-reveal="left"] { transform: translateX(-32px); }
+[data-reveal="right"] { transform: translateX(32px); }
+[data-reveal="left"].is-visible,
+[data-reveal="right"].is-visible { transform: none; }
+
+/* ---------- Accessibility ---------- */
+:focus-visible { outline: 2px solid var(--c-primary-500); outline-offset: 3px; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; top: 8px; left: 8px; z-index: 200;
+  padding: 10px 16px; border-radius: var(--radius-cta);
+  background: var(--c-white); color: var(--c-primary-900);
+  font-weight: 700; transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.skip-link:focus { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  [data-parallax] { transform: none !important; }
+}

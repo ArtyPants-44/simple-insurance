@@ -1,0 +1,81 @@
+---
+import Brand from "./Brand.astro";
+
+/* NOTE: this is the one section I had no reference for — it isn't in the
+   PNGs you sent. Built from the live copy using the design system, sitting
+   tonally between Who We Help (800) and Why We Are Different (900).
+   Point me at the Figma frame (896:1396) and I'll match it exactly. */
+const stats = [
+  { value: 140, suffix: "+", label: "Insurers and Underwriters we access" },
+  { value: 15, suffix: "+", label: "Years in underwriting, law and insurance broking" },
+  { value: 100, suffix: "%", label: "Real Humans — no call centres" },
+  { static: "<24 hr", label: "Response time — so you can get on with business" },
+];
+---
+
+<section class="nums section" id="our-numbers">
+  <div class="container">
+    <p class="eyebrow nums__eyebrow" data-reveal style="--i:0">
+      Our Numbers
+      <Brand variant="quarter-dot" height={26} />
+    </p>
+
+    <h2 class="h2 nums__title" data-reveal style="--i:1">
+      Proof that simple can still be <em>powerful.</em>
+    </h2>
+
+    <dl class="nums__grid">
+      {stats.map((s, i) => (
+        <div class="nums__item" data-reveal style={`--i:${i}`}>
+          <dt class="nums__value">
+            {s.static ? (
+              <span>{s.static}</span>
+            ) : (
+              <span data-count-to={s.value} data-count-suffix={s.suffix}>0{s.suffix}</span>
+            )}
+          </dt>
+          <dd class="nums__label">{s.label}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .nums { background: var(--c-primary-900); color: var(--c-white); text-align: center; }
+
+  .nums__eyebrow { color: var(--c-white); }
+  .nums__title { margin: 26px auto 0; max-width: 18ch; }
+  .nums__title em { font-style: normal; color: var(--c-primary-500); }
+
+  .nums__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    margin: clamp(48px, 6vw, 80px) 0 0;
+    text-align: left;
+  }
+  .nums__item {
+    padding-top: 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .nums__value {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: clamp(40px, 4.6vw, 64px);
+    letter-spacing: var(--track-h1);
+    line-height: 1.05;
+    color: var(--c-primary-500);
+    font-variant-numeric: tabular-nums;
+  }
+  .nums__label {
+    margin: 14px 0 0;
+    max-width: 26ch;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: var(--size-body-sm);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) { .nums__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .nums__grid { grid-template-columns: 1fr; } }
+</style>

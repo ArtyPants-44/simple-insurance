@@ -1,0 +1,87 @@
+---
+import ContactForm from "./ContactForm.astro";
+import Icon from "./Icon.astro";
+---
+
+<section class="ctap" id="contact">
+  <div class="ctap__media" aria-hidden="true">
+    <img src="/images/cta-warehouse.jpg" alt="" data-parallax="0.1" loading="lazy" decoding="async" />
+    <div class="ctap__scrim"></div>
+  </div>
+
+  <div class="container ctap__inner">
+    <div class="ctap__copy">
+      <h2 class="h1 ctap__title" data-reveal style="--i:0">
+        Let's make your insurance <em>Simple.</em>
+      </h2>
+      <p class="body-lg ctap__lede" data-reveal style="--i:1">
+        Tell us about your business and we'll take it from here.
+      </p>
+      <a href="tel:+61481784456" class="link-arrow ctap__phone" data-reveal style="--i:2">
+        <Icon name="phone" size={20} stroke={2.2} />
+        0481 784 456
+      </a>
+    </div>
+
+    <div class="ctap__form" data-reveal="right">
+      <h3 class="h4 ctap__form-title">Get in touch</h3>
+      <ContactForm tone="dark" id="cta-form" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .ctap {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: clamp(80px, 10vw, 150px);
+    color: var(--c-white);
+  }
+  .ctap__media { position: absolute; inset: -12% 0; z-index: -2; }
+  .ctap__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* bias upward so the subject's head stays in frame on wide, short crops */
+    object-position: 50% 40%;
+    will-change: transform;
+  }
+  .ctap__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(8, 18, 11, 0.72) 0%,
+      rgba(8, 18, 11, 0.5) 42%,
+      rgba(8, 18, 11, 0.32) 100%
+    );
+  }
+
+  .ctap__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 6vw, 88px);
+    align-items: start;
+  }
+
+  .ctap__title { max-width: 14ch; }
+  .ctap__title em { font-style: normal; color: var(--c-primary-500); }
+  .ctap__lede { margin-top: 22px; max-width: 34ch; color: rgba(255, 255, 255, 0.86); }
+  .ctap__phone { margin-top: 26px; font-size: var(--size-body-large); }
+
+  .ctap__form {
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--radius-card);
+    background: rgba(8, 18, 11, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .ctap__form-title { margin-bottom: 20px; }
+
+  @media (max-width: 900px) {
+    .ctap__inner { grid-template-columns: 1fr; }
+  }
+</style>

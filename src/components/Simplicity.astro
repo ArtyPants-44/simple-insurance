@@ -1,0 +1,217 @@
+---
+import Brand from "./Brand.astro";
+import Icon from "./Icon.astro";
+
+/* Live content (two cards, annual pricing, EXAMPLE ONLY badge) in the Figma
+   card treatment. The Allianz logo + monthly premium from the Figma frame are
+   intentionally dropped — the live version reads as a compliance change. */
+const policies = [
+  {
+    name: "Professional Indemnity",
+    blurb: "Protects your business if a client claims you gave negligent advice, made a mistake, or breached your professional duty.",
+    premium: "From $950/yr",
+    renewal: "12 Oct 2026",
+    covers: [
+      "Legal defence costs",
+      "Compensation for client loss",
+      "Breach of professional duty",
+      "Loss of documents",
+    ],
+    excludes: [
+      "Criminal or fraudulent acts",
+      "Circumstances known before your policy started",
+    ],
+  },
+  {
+    name: "Public Liability",
+    blurb: "Protects your business if your work causes injury to another person or damage to their property.",
+    premium: "From $750/yr",
+    renewal: "12 Oct 2026",
+    covers: [
+      "Legal defence costs",
+      "Injury or property damage compensation",
+      "Product liability",
+      "Medical expenses (third party)",
+    ],
+    excludes: [
+      "Employee injuries (covered by workers comp)",
+      "Intentional acts",
+    ],
+  },
+];
+---
+
+<section class="simp section" id="clarity">
+  <div class="container">
+    <p class="eyebrow simp__eyebrow" data-reveal style="--i:0">
+      Clarity &amp; Simplicity
+      <Brand variant="leaves" height={26} />
+    </p>
+
+    <h2 class="h2 simp__title" data-reveal style="--i:1">
+      See exactly what you're getting
+    </h2>
+
+    <div class="simp__cards">
+      {policies.map((p, i) => (
+        <article class="pcard" data-reveal="scale" style={`--i:${i}`}>
+          <header class="pcard__head">
+            <span class="pcard__badge">Example only</span>
+            <span class="pcard__tick" aria-hidden="true">
+              <Icon name="check" size={20} stroke={3} />
+            </span>
+          </header>
+
+          <h3 class="h4 pcard__name">{p.name}</h3>
+          <p class="pcard__blurb">{p.blurb}</p>
+
+          <dl class="pcard__facts">
+            <div>
+              <dt>Indicative annual premium</dt>
+              <dd class="pcard__premium">{p.premium}</dd>
+            </div>
+            <div>
+              <dt>Example renewal</dt>
+              <dd>{p.renewal}</dd>
+            </div>
+          </dl>
+
+          <div class="pcard__lists">
+            <div>
+              <h4 class="pcard__list-title">Typically covers</h4>
+              <ul class="pcard__list">
+                {p.covers.map((c) => (
+                  <li>
+                    <span class="pill pill--yes" aria-hidden="true"><Icon name="check" size={14} stroke={3.4} /></span>
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 class="pcard__list-title">Typically excludes</h4>
+              <ul class="pcard__list">
+                {p.excludes.map((c) => (
+                  <li>
+                    <span class="pill pill--no" aria-hidden="true"><Icon name="close" size={14} stroke={3.4} /></span>
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <p class="simp__foot" data-reveal>
+      A Simple Summary — so you can understand your cover at a glance, not decode it.
+    </p>
+  </div>
+</section>
+
+<style>
+  .simp { background: var(--c-neutral-100); color: var(--c-primary-900); text-align: center; }
+  .simp__eyebrow { color: var(--c-primary-900); }
+  .simp__eyebrow :global(svg) { color: var(--c-primary-500); }
+  .simp__title { margin-top: 26px; color: var(--c-primary-700); }
+
+  .simp__cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    margin-top: clamp(40px, 6vw, 72px);
+    text-align: left;
+  }
+
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    padding: 28px;
+    border-radius: var(--radius-card);
+    background: var(--c-white);
+    box-shadow: 0 1px 2px rgba(13, 21, 29, 0.04), 0 18px 40px -32px rgba(13, 21, 29, 0.5);
+    transition: transform var(--dur-mid) var(--ease-out),
+                box-shadow var(--dur-mid) var(--ease-out);
+  }
+  .pcard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1px 2px rgba(13, 21, 29, 0.05), 0 30px 60px -34px rgba(13, 21, 29, 0.55);
+  }
+
+  .pcard__head { display: flex; align-items: center; justify-content: space-between; }
+  .pcard__badge {
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    background: var(--c-neutral-200);
+    color: var(--c-neutral-600);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .pcard__tick {
+    display: grid; place-items: center;
+    width: 30px; height: 30px;
+    border-radius: var(--radius-full);
+    background: var(--c-primary-500);
+    color: var(--c-white);
+  }
+
+  .pcard__name { margin-top: 20px; }
+  .pcard__blurb { margin-top: 10px; font-size: var(--size-body-sm); color: var(--c-neutral-600); }
+
+  .pcard__facts {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 20px;
+    align-items: end;
+    margin: 24px 0 0;
+    padding: 18px 0;
+    border-block: 1px solid var(--c-neutral-200);
+  }
+  .pcard__facts dt { font-size: 12px; font-weight: 600; color: var(--c-neutral-500); }
+  .pcard__facts dd { margin: 0; font-weight: 600; }
+  .pcard__facts > div:last-child { text-align: right; }
+  .pcard__premium {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--c-primary-700);
+  }
+
+  .pcard__lists { display: grid; gap: 22px; margin-top: 22px; }
+  .pcard__list-title {
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-neutral-500);
+  }
+  .pcard__list { list-style: none; padding: 0; display: grid; gap: 10px; }
+  .pcard__list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--size-body-sm);
+  }
+  .pill {
+    display: grid; place-items: center;
+    width: 20px; height: 20px;
+    flex: none;
+    border-radius: var(--radius-full);
+    color: var(--c-white);
+  }
+  .pill--yes { background: var(--c-primary-500); }
+  .pill--no { background: var(--c-secondary-500); }
+
+  .simp__foot {
+    max-width: 52ch;
+    margin: clamp(40px, 5vw, 64px) auto 0;
+    color: var(--c-neutral-600);
+  }
+
+  @media (max-width: 860px) { .simp__cards { grid-template-columns: 1fr; } }
+</style>

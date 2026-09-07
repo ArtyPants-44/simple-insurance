@@ -1,0 +1,269 @@
+---
+import Brand from "./Brand.astro";
+import Icon from "./Icon.astro";
+import Cta from "./Cta.astro";
+
+/* Figma nav styling, live-site labels/anchors (the Insurance / Claims /
+   Resources pages in the Figma nav don't exist yet). */
+const links = [
+  { label: "Our Promise", href: "#promise" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Who We Help", href: "#who-we-help" },
+  { label: "Contact", href: "#contact" },
+];
+const phone = { display: "0481 784 456", href: "tel:+61481784456" };
+---
+
+<header class="nav" data-nav>
+  <div class="container nav__bar">
+    <div class="nav__pill">
+      <!-- Mobile only: sits left of the mark and morphs into the close X -->
+      <button
+        class="nav__toggle"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-panel"
+        aria-label="Open menu"
+        type="button"
+      >
+        <span class="nav__bars" aria-hidden="true"><span></span><span></span></span>
+      </button>
+
+      <a href="#top" class="nav__logo" aria-label="Simple Insurance — home">
+        <span class="nav__logo-lockup"><Brand variant="logo" height={30} /></span>
+        <span class="nav__logo-lockup nav__logo-lockup--light">
+          <Brand variant="logo" tone="light" height={30} />
+        </span>
+        <span class="nav__logo-symbol"><Brand variant="symbol" height={34} /></span>
+      </a>
+
+      <nav class="nav__links" aria-label="Primary">
+        {links.map((l) => (
+          <a href={l.href} class="nav__link"><span>{l.label}</span></a>
+        ))}
+      </nav>
+
+      <div class="nav__actions">
+        <a href={phone.href} class="nav__phone">
+          <Icon name="phone" size={18} stroke={2.4} />
+          <span>{phone.display}</span>
+        </a>
+        <Cta label="Get Started" href="#contact" class="nav__cta" />
+      </div>
+    </div>
+  </div>
+
+  <div class="nav__panel" id="nav-panel" data-nav-panel>
+    <nav class="nav__panel-links" aria-label="Mobile">
+      {links.map((l) => (
+        <a href={l.href} class="nav__panel-link">{l.label}</a>
+      ))}
+    </nav>
+
+    <div class="nav__panel-foot">
+      <a href={phone.href} class="nav__panel-phone">{phone.display}</a>
+      <Cta label="Get Started" href="#contact" class="nav__panel-cta" />
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 16px 0 auto 0;
+    z-index: 100;
+    transition: inset var(--dur-mid) var(--ease-out);
+  }
+  .nav.is-stuck { inset: 8px 0 auto 0; }
+
+  /* Bar sits above the panel so the burger can morph in place. */
+  .nav__bar { position: relative; z-index: 2; }
+
+  .nav__pill {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 10px 10px 10px 22px;
+    border-radius: var(--radius-nav);
+    background: var(--c-white);
+    box-shadow: 0 2px 10px -4px rgba(13, 21, 29, 0.14);
+    transition: background var(--dur-mid) var(--ease-out),
+                box-shadow var(--dur-mid) var(--ease-out);
+  }
+  .nav.is-stuck .nav__pill {
+    box-shadow: 0 14px 40px -18px rgba(13, 21, 29, 0.45);
+  }
+  /* Open: the pill dissolves into the dark panel behind it. */
+  .nav.is-open .nav__pill {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .nav__logo { display: flex; align-items: center; flex: none; }
+  .nav__logo-lockup--light,
+  .nav__logo-symbol { display: none; }
+
+  /* ---- Burger / close ---- */
+  .nav__toggle {
+    display: none;
+    padding: 8px 6px;
+    border: 0;
+    background: transparent;
+    color: var(--c-primary-900);
+    cursor: pointer;
+    transition: color var(--dur-mid) var(--ease-out);
+  }
+  .nav.is-open .nav__toggle { color: var(--c-white); }
+
+  .nav__bars { display: block; position: relative; width: 26px; height: 16px; }
+  .nav__bars span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+    /* Closing: unrotate first, then part. */
+    transition: top 260ms var(--ease-out) 200ms,
+                transform 260ms var(--ease-out) 0ms;
+  }
+  .nav__bars span:first-child { top: 1.5px; }
+  .nav__bars span:last-child { top: 12px; }
+
+  /* Opening: meet in the middle first, then cross. */
+  .nav.is-open .nav__bars span {
+    transition: top 260ms var(--ease-out) 0ms,
+                transform 260ms var(--ease-out) 200ms;
+    top: 6.75px;
+  }
+  .nav.is-open .nav__bars span:first-child { transform: rotate(45deg); }
+  .nav.is-open .nav__bars span:last-child { transform: rotate(-45deg); }
+
+  /* ---- Desktop links ---- */
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: var(--nav-gap);
+    margin-inline: auto;
+  }
+  .nav__link {
+    position: relative;
+    font-family: var(--font-primary);
+    font-size: var(--nav-link-size);
+    font-weight: var(--nav-link-weight);
+    color: var(--c-primary-900);
+    padding-block: 4px;
+  }
+  .nav__link::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 2px;
+    background: var(--c-primary-500);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-mid) var(--ease-out);
+  }
+  .nav__link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  .nav__actions { display: flex; align-items: center; gap: 14px; flex: none; }
+
+  .nav__phone {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--c-primary-900);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .nav__phone:hover { color: var(--c-primary-600); }
+
+  :global(.nav__cta) { padding: 12px 22px; }
+
+  /* ---- Panel ---- */
+  .nav__panel {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 108px var(--gutter) calc(28px + env(safe-area-inset-bottom, 0px));
+    background: var(--c-primary-900);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-mid) var(--ease-out);
+  }
+  .nav__panel.is-open { opacity: 1; pointer-events: auto; }
+
+  .nav__panel-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 3.4vh, 30px);
+  }
+  .nav__panel-link {
+    font-family: var(--font-primary);
+    font-weight: 500;
+    font-size: clamp(28px, 7.5vw, 38px);
+    letter-spacing: -0.02em;
+    color: var(--c-white);
+    /* staggered rise, driven by the panel opening */
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+  }
+  .nav__panel.is-open .nav__panel-link { opacity: 1; transform: none; }
+  .nav__panel.is-open .nav__panel-link:nth-child(1) { transition-delay: 120ms; }
+  .nav__panel.is-open .nav__panel-link:nth-child(2) { transition-delay: 180ms; }
+  .nav__panel.is-open .nav__panel-link:nth-child(3) { transition-delay: 240ms; }
+  .nav__panel.is-open .nav__panel-link:nth-child(4) { transition-delay: 300ms; }
+
+  .nav__panel-foot { display: grid; gap: clamp(24px, 4vh, 36px); justify-items: center; }
+  .nav__panel-phone {
+    font-family: var(--font-primary);
+    font-weight: 700;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+    color: var(--c-primary-500);
+  }
+  :global(.nav__panel-cta) {
+    width: 100%;
+    padding-block: 18px;
+    border-radius: var(--radius-cta);
+  }
+
+  /* ---- Mobile layout: burger | mark | CTA ---- */
+  @media (max-width: 1080px) {
+    .nav__links { display: none; }
+    .nav__toggle { display: block; }
+
+    .nav__pill {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 8px 8px 12px;
+    }
+    .nav__toggle { justify-self: start; }
+    .nav__logo { justify-self: center; }
+    .nav__actions { justify-self: end; }
+
+    /* mark only when closed, full lockup once open */
+    .nav__logo-lockup { display: none; }
+    .nav__logo-symbol { display: block; }
+    .nav.is-open .nav__logo-symbol { display: none; }
+    .nav.is-open .nav__logo-lockup--light { display: block; }
+
+    :global(.nav__cta) { padding: 11px 18px; }
+    .nav.is-open :global(.nav__cta) { display: none; }
+  }
+
+  @media (min-width: 1200px) { .nav__phone { display: flex; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav__panel-link { opacity: 1; transform: none; }
+  }
+</style>

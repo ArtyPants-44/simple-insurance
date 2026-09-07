@@ -1,0 +1,140 @@
+---
+import Cta from "./Cta.astro";
+import Icon from "./Icon.astro";
+
+interface Props { tone?: "light" | "dark"; id?: string; }
+const { tone = "light", id = "contact-form" } = Astro.props;
+
+const types = [
+  "Professional Indemnity",
+  "Public Liability",
+  "Small Business",
+  "Cyber",
+  "Management Liability (D&O)",
+  "Other",
+];
+---
+
+<form class={`form form--${tone}`} id={id} method="POST" action="/api/enquiry" novalidate>
+  <div class="form__row">
+    <div class="field">
+      <label for={`${id}-name`}>Name</label>
+      <input id={`${id}-name`} name="name" type="text" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for={`${id}-email`}>Email</label>
+      <input id={`${id}-email`} name="email" type="email" autocomplete="email" required />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for={`${id}-phone`}>Phone <span class="field__opt">Optional</span></label>
+    <input id={`${id}-phone`} name="phone" type="tel" autocomplete="tel" />
+  </div>
+
+  <fieldset class="field field--group">
+    <legend>Type of insurance <span class="field__opt">Optional</span></legend>
+    <p class="field__hint">Select all that apply</p>
+    <div class="checks">
+      {types.map((t) => (
+        <label class="check">
+          <input type="checkbox" name="insuranceType" value={t} />
+          <span class="check__box" aria-hidden="true"><Icon name="check" size={13} stroke={3.6} /></span>
+          <span class="check__label">{t}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <div class="field">
+    <label for={`${id}-message`}>Tell us how we can help</label>
+    <textarea id={`${id}-message`} name="message" rows="4"></textarea>
+  </div>
+
+  <Cta label="Send enquiry" type="submit" class="form__submit" />
+</form>
+
+<style>
+  .form { display: grid; gap: 18px; }
+  .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  .field { display: grid; gap: 8px; border: 0; padding: 0; margin: 0; }
+  .field label, .field legend {
+    font-size: var(--size-body-sm);
+    font-weight: 600;
+    padding: 0;
+  }
+  .field__opt { font-weight: 400; opacity: 0.6; }
+  .field__hint { margin: 0; font-size: 12px; font-weight: 600; opacity: 0.7; }
+
+  input[type="text"], input[type="email"], input[type="tel"], textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border-radius: var(--radius-cta);
+    border: 1.5px solid var(--c-neutral-300);
+    background: var(--c-white);
+    color: var(--c-neutral-900);
+    transition: border-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--c-primary-500);
+    box-shadow: 0 0 0 4px rgba(89, 191, 122, 0.18);
+  }
+  textarea { resize: vertical; }
+
+  .checks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 4px; }
+  .check {
+    display: flex; align-items: center; gap: 10px;
+    font-size: var(--size-body-sm); font-weight: 400;
+    cursor: pointer;
+  }
+  .check input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .check__box {
+    display: grid; place-items: center;
+    width: 22px; height: 22px; flex: none;
+    border-radius: 6px;
+    border: 1.5px solid var(--c-neutral-300);
+    background: var(--c-white);
+    color: transparent;
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
+  }
+  .check input:checked + .check__box {
+    background: var(--c-primary-500);
+    border-color: var(--c-primary-500);
+    color: var(--c-white);
+    transform: scale(1.06);
+  }
+  .check input:focus-visible + .check__box {
+    box-shadow: 0 0 0 4px rgba(89, 191, 122, 0.25);
+  }
+
+  :global(.form__submit) { justify-self: start; margin-top: 4px; }
+
+  /* Dark surface variant (used inside the CTA panel) */
+  .form--dark { color: var(--c-white); }
+  .form--dark input[type="text"],
+  .form--dark input[type="email"],
+  .form--dark input[type="tel"],
+  .form--dark textarea {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: var(--c-white);
+  }
+  .form--dark .check__box {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+  .form--dark input:checked + .check__box {
+    background: var(--c-primary-500);
+    border-color: var(--c-primary-500);
+  }
+
+  @media (max-width: 640px) {
+    .form__row, .checks { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,199 @@
+---
+import Cta from "./Cta.astro";
+import Brand from "./Brand.astro";
+import Icon from "./Icon.astro";
+
+/* Live site replaced the Figma's positive chips (Clarity / Support / Broker /
+   Compliant) with the problems they solve. Live copy retained. */
+const problems = [
+  { label: "Heavy jargon", icon: "jargon" },
+  { label: "63 Documents", icon: "documents" },
+  { label: "Time Consuming", icon: "time-consuming" },
+  { label: "Rotating Account Managers", icon: "account-manager" },
+];
+
+const benefits = [
+  { title: "Clarity over clutter.", body: "We cut the jargon and the paperwork — plainer language, simpler explanations, and summaries you can actually read." },
+  { title: "In your corner.", body: "We're a broker, which means we work for you — not the insurer — including at claim time." },
+  { title: "Same people every time.", body: "No call centre, no rotating account managers." },
+  { title: "Thorough and compliant.", body: "Simple to deal with, serious about what we do." },
+];
+---
+
+<section class="why section" id="why-different">
+  <div class="container">
+    <p class="eyebrow why__eyebrow" data-reveal style="--i:0">
+      Why We Are Different
+      <Brand variant="quarter-dot" height={26} />
+    </p>
+
+    <div class="why__diagram">
+      <!-- Problem chips -->
+      <ul class="why__chips">
+        {problems.map((p, i) => (
+          <li class="chip" data-reveal="scale" style={`--i:${i}`}>
+            <Icon name={p.icon} size={34} />
+            <span>{p.label}</span>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Curves: chips → headline -->
+      <svg class="why__wires why__wires--top" viewBox="0 0 1200 190" preserveAspectRatio="none" aria-hidden="true" data-reveal>
+        <g fill="none" stroke="var(--c-neutral-600)" stroke-width="1.5" opacity="0.85">
+          <path pathLength="1" d="M150 0 C150 110 420 80 545 180" />
+          <path pathLength="1" d="M450 0 C450 110 560 100 578 180" />
+          <path pathLength="1" d="M750 0 C750 110 660 100 622 180" />
+          <path pathLength="1" d="M1050 0 C1050 110 790 80 655 180" />
+        </g>
+      </svg>
+
+      <h2 class="h2 why__title" data-reveal>
+        <em>Simple to deal with.</em><br />
+        Serious about cover.
+      </h2>
+
+      <!-- Curves: headline → mark -->
+      <svg class="why__wires why__wires--mid" viewBox="0 0 1200 150" preserveAspectRatio="none" aria-hidden="true" data-reveal>
+        <g fill="none" stroke="var(--c-primary-500)" stroke-width="1.5" opacity="0.9">
+          <path pathLength="1" d="M530 0 C530 90 590 80 596 150" />
+          <path pathLength="1" d="M580 0 C580 90 598 80 600 150" />
+          <path pathLength="1" d="M620 0 C620 90 602 80 600 150" />
+          <path pathLength="1" d="M670 0 C670 90 610 80 604 150" />
+        </g>
+      </svg>
+
+      <div class="why__mark" data-reveal="scale">
+        <Brand variant="symbol-invert" height={186} />
+      </div>
+
+      <!-- Curves: mark → benefits -->
+      <svg class="why__wires why__wires--bottom" viewBox="0 0 1200 130" preserveAspectRatio="none" aria-hidden="true" data-reveal>
+        <g fill="none" stroke="var(--c-primary-500)" stroke-width="1.5" opacity="0.9">
+          <path pathLength="1" d="M596 0 C596 70 180 40 180 130" />
+          <path pathLength="1" d="M599 0 C599 70 460 40 460 130" />
+          <path pathLength="1" d="M601 0 C601 70 740 40 740 130" />
+          <path pathLength="1" d="M604 0 C604 70 1020 40 1020 130" />
+        </g>
+      </svg>
+
+      <ul class="why__benefits">
+        {benefits.map((b, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <h3 class="h4 why__benefit-title">{b.title}</h3>
+            <p class="why__benefit-body">{b.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="why__cta" data-reveal>
+      <Cta label="Get Started" href="#contact" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .why { background: var(--c-primary-900); color: var(--c-white); text-align: center; }
+  .why__eyebrow { color: var(--c-white); }
+
+  .why__diagram { max-width: 1200px; margin: clamp(40px, 6vw, 72px) auto 0; }
+
+  /* ---- Chips ---- */
+  .why__chips {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    justify-items: center;
+  }
+  .chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 150px;
+    aspect-ratio: 1;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    background: var(--c-neutral-100);
+    color: var(--c-neutral-600);
+    font-size: var(--size-body-sm);
+    font-weight: 500;
+    line-height: 1.3;
+    text-wrap: balance;
+    transition: transform var(--dur-mid) var(--ease-out);
+  }
+  .chip:hover { transform: translateY(-4px); }
+
+  /* ---- Wires ---- */
+  .why__wires { width: 100%; display: block; }
+  .why__wires--top { height: 190px; }
+  .why__wires--mid { height: 150px; margin-top: 8px; }
+  .why__wires--bottom { height: 130px; }
+
+  .why__wires path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.4s var(--ease-out);
+  }
+  .why__wires.is-visible path { stroke-dashoffset: 0; }
+  .why__wires.is-visible path:nth-child(2) { transition-delay: 120ms; }
+  .why__wires.is-visible path:nth-child(3) { transition-delay: 240ms; }
+  .why__wires.is-visible path:nth-child(4) { transition-delay: 360ms; }
+
+  /* ---- Headline ---- */
+  .why__title { margin-top: -8px; }
+  .why__title em { font-style: normal; color: var(--c-primary-500); }
+
+  /* ---- Glowing mark ---- */
+  .why__mark {
+    display: grid;
+    place-items: center;
+    margin-block: 4px;
+  }
+  .why__mark :global(svg) {
+    border-radius: 18%;
+    box-shadow:
+      0 0 0 1px rgba(89, 191, 122, 0.25),
+      0 0 60px 18px rgba(89, 191, 122, 0.45),
+      0 0 140px 60px rgba(89, 191, 122, 0.22);
+    animation: markPulse 5s var(--ease-inout) infinite;
+  }
+  @keyframes markPulse {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(89,191,122,0.25), 0 0 60px 18px rgba(89,191,122,0.45), 0 0 140px 60px rgba(89,191,122,0.20); }
+    50%      { box-shadow: 0 0 0 1px rgba(89,191,122,0.35), 0 0 76px 26px rgba(89,191,122,0.58), 0 0 170px 76px rgba(89,191,122,0.28); }
+  }
+
+  /* ---- Benefits ---- */
+  .why__benefits {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    text-align: left;
+  }
+  .why__benefit-title { color: var(--c-primary-500); max-width: 12ch; }
+  .why__benefit-body {
+    margin-top: 14px;
+    font-size: var(--size-body-sm);
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .why__cta { margin-top: clamp(48px, 6vw, 80px); }
+
+  @media (max-width: 1080px) {
+    .why__wires { display: none; }
+    .why__chips { grid-template-columns: repeat(2, 1fr); }
+    .why__title { margin-top: 56px; }
+    .why__mark { margin-block: 56px; }
+    .why__benefits { grid-template-columns: repeat(2, 1fr); }
+    .chip { width: 100%; max-width: 170px; }
+  }
+  @media (max-width: 560px) {
+    .why__benefits { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,34 @@
+---
+/**
+ * Primary CTA — Figma button/CTA-primary-02.
+ *
+ * Renders two identical labels stacked in one grid cell: the white one
+ * fades out as the primary-900 one fades in, timed to the coral sweep.
+ * Identical text means the button is sized once and never reflows.
+ *
+ * Renders <a> when `href` is passed, otherwise <button>.
+ */
+interface Props {
+  label: string;
+  href?: string;
+  type?: "button" | "submit";
+  class?: string;
+}
+const { label, href, type = "button", class: className = "" } = Astro.props;
+---
+
+{href ? (
+  <a href={href} class={`cta ${className}`}>
+    <span class="cta__label">
+      <span class="cta__label-base">{label}</span>
+      <span class="cta__label-hover" aria-hidden="true">{label}</span>
+    </span>
+  </a>
+) : (
+  <button type={type} class={`cta ${className}`}>
+    <span class="cta__label">
+      <span class="cta__label-base">{label}</span>
+      <span class="cta__label-hover" aria-hidden="true">{label}</span>
+    </span>
+  </button>
+)}

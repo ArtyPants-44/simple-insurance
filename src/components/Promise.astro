@@ -1,0 +1,106 @@
+---
+import Brand from "./Brand.astro";
+---
+
+<section class="promise section" id="promise">
+  <div class="container promise__grid">
+    <div class="promise__copy">
+      <p class="eyebrow promise__eyebrow" data-reveal style="--i:0">
+        Our Promise
+        <Brand variant="leaves" height={26} />
+      </p>
+
+      <h2 class="h1 promise__title" data-reveal style="--i:1">
+        <span>The Problem.</span>
+        <span>The Relief.</span>
+      </h2>
+
+      <p class="promise__body" data-reveal style="--i:2">
+        Insurance is necessary. It shouldn't be stressful. You take the risks
+        that grow your business — we make sure that if something goes wrong,
+        you're protected.
+      </p>
+
+      <p class="h4 promise__statement" data-reveal style="--i:3">
+        We make insurance simple, so you can get on with business.
+      </p>
+    </div>
+
+    <div class="promise__media" data-reveal="right">
+      <!-- shape-horizontal.svg — fills mapped to tokens rather than hardcoded -->
+      <span class="promise__shapes" data-parallax="0.09" aria-hidden="true">
+        <svg viewBox="0 0 220 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M167.404 105C196.452 105 220 81.495 220 52.5C220 23.5051 196.452 0 167.404 0C138.356 0 114.807 23.5051 114.807 52.5C114.807 81.495 138.356 105 167.404 105Z"
+            fill="var(--c-primary-700)"
+          />
+          <path
+            d="M105.155 0C47.0858 0 0 46.9996 0 104.962H105.155V0Z"
+            fill="var(--c-primary-500)"
+          />
+        </svg>
+      </span>
+      <img
+        src="/images/promise-tradespeople.jpg"
+        alt="Tradespeople reviewing plans on site"
+        width="1008" height="1200" loading="lazy" decoding="async"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .promise { background: var(--c-neutral-200); color: var(--c-primary-900); }
+
+  .promise__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .promise__eyebrow { color: var(--c-primary-900); margin-bottom: clamp(40px, 7vw, 96px); }
+  .promise__eyebrow :global(svg) { color: var(--c-primary-500); }
+
+  .promise__title span { display: block; }
+  .promise__title span:first-child { color: var(--c-primary-700); }
+  .promise__title span:last-child { color: var(--c-primary-500); }
+
+  .promise__body {
+    max-width: 46ch;
+    margin-top: clamp(32px, 5vw, 64px);
+    color: var(--c-neutral-900);
+  }
+  .promise__statement { max-width: 22ch; margin-top: 28px; }
+
+  .promise__media {
+    position: relative;
+    justify-self: end;
+    width: min(100%, 560px);
+  }
+  .promise__media img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1008 / 1200;
+    object-fit: cover;
+    border-radius: var(--radius-card);
+    background: var(--c-neutral-300);
+  }
+
+  /* Overhangs the image's top-right corner, as in the Figma frame. */
+  .promise__shapes {
+    position: absolute;
+    top: -19%;
+    right: -16%;
+    width: 73%;
+    z-index: 2;
+    will-change: transform;
+  }
+  .promise__shapes svg { width: 100%; height: auto; display: block; }
+
+  @media (max-width: 900px) {
+    .promise__grid { grid-template-columns: 1fr; }
+    .promise__media { justify-self: stretch; }
+    .promise__media img { aspect-ratio: 4 / 5; }
+  }
+</style>

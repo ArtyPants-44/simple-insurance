@@ -1,0 +1,190 @@
+---
+import Cta from "./Cta.astro";
+import Brand from "./Brand.astro";
+
+/* Step 1 copy is taken verbatim from the live site. Steps 2 and 3 are only
+   rendered on the live site once the stepper is advanced, so they didn't come
+   through in the scrape — the copy below is written to match the voice.
+   >>> CONFIRM OR REPLACE steps 2 and 3 with the real copy. <<< */
+const steps = [
+  {
+    n: "01",
+    title: "Tell us about your business.",
+    body: "Give us the details of your business and what you need covered. We'll ask what's relevant to you — nothing more, nothing less — so the cover we find actually fits.",
+    image: "/images/how-consult.jpg",
+    alt: "Broker walking a business owner through her cover options",
+  },
+  {
+    n: "02",
+    title: "We do the legwork.",
+    body: "We take your details to the market and compare cover across the insurers and underwriters we access — then come back with options in plain language, not a stack of PDFs.",
+    image: "/images/how-legwork.jpg",
+    alt: "Broker comparing policy options",
+  },
+  {
+    n: "03",
+    title: "You're covered.",
+    body: "Once you're happy, we put the cover in place and send you a summary you can actually read. Same people every time — including at claim time.",
+    image: "/images/how-covered.jpg",
+    alt: "Business owner back at work, covered",
+  },
+];
+---
+
+<section class="hiw section" id="how-it-works">
+  <div class="container">
+    <p class="eyebrow hiw__eyebrow" data-reveal style="--i:0">
+      How It Works
+      <Brand variant="quarter-dot" height={26} />
+    </p>
+
+    <h2 class="h2 hiw__title" data-reveal style="--i:1">
+      <span>Getting covered.</span> <em>Made Simple.</em>
+    </h2>
+
+    <div class="hiw__grid" data-stepper>
+      <ol class="hiw__steps" role="tablist" aria-label="How it works" data-reveal="left">
+        {steps.map((s, i) => (
+          <li>
+            <button
+              class="hiw__step"
+              data-step-trigger
+              role="tab"
+              aria-selected={i === 0 ? "true" : "false"}
+              type="button"
+            >
+              <span class="hiw__num">{s.n}</span>
+              <span class="hiw__step-label">{s.title}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+
+      <div class="hiw__media" data-reveal="scale">
+        {steps.map((s) => (
+          <img
+            class="hiw__shot"
+            data-step-image
+            src={s.image}
+            alt={s.alt}
+            width="720" height="1000"
+            loading="lazy" decoding="async"
+          />
+        ))}
+      </div>
+
+      <div class="hiw__panels" data-reveal="right">
+        {steps.map((s) => (
+          <div class="hiw__panel" data-step-panel role="tabpanel">
+            <h3 class="h4 hiw__panel-title">{s.title}</h3>
+            <p class="hiw__panel-body">{s.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="hiw__cta" data-reveal>
+      <Cta label="Get Started" href="#contact" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hiw { background: var(--c-neutral-100); color: var(--c-primary-900); text-align: center; }
+
+  .hiw__eyebrow { color: var(--c-primary-900); }
+  .hiw__title { margin-top: 26px; color: var(--c-primary-700); }
+  .hiw__title em { font-style: normal; color: var(--c-primary-500); }
+
+  .hiw__grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+    margin-top: clamp(40px, 6vw, 72px);
+    text-align: left;
+  }
+
+  /* ---- Steps ---- */
+  .hiw__steps { list-style: none; padding: 0; display: grid; gap: 10px; justify-items: end; }
+  .hiw__step {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 10px 0;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: clamp(17px, 1.5vw, 21px);
+    letter-spacing: -0.02em;
+    color: var(--c-primary-500);
+    cursor: pointer;
+    text-align: right;
+    opacity: 0.55;
+    transition: opacity var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
+  }
+  .hiw__step:hover { opacity: 0.85; }
+  .hiw__step.is-active {
+    opacity: 1;
+    color: var(--c-primary-900);
+    transform: translateX(-4px);
+  }
+  .hiw__num {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--c-neutral-500);
+  }
+  .hiw__step.is-active .hiw__num { color: var(--c-primary-500); }
+
+  /* ---- Media ---- */
+  .hiw__media {
+    position: relative;
+    width: clamp(260px, 26vw, 362px);
+    aspect-ratio: 362 / 500;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--c-neutral-300);
+  }
+  .hiw__shot {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.04);
+    transition: opacity var(--dur-mid) var(--ease-out),
+                transform var(--dur-slow) var(--ease-out);
+  }
+  .hiw__shot.is-active { opacity: 1; transform: none; }
+
+  /* ---- Panels ---- */
+  .hiw__panels { position: relative; min-height: 190px; }
+  .hiw__panel {
+    position: absolute;
+    inset: 0;
+    max-width: 34ch;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity var(--dur-mid) var(--ease-out),
+                transform var(--dur-mid) var(--ease-out);
+  }
+  .hiw__panel.is-active { opacity: 1; transform: none; pointer-events: auto; }
+  .hiw__panel-title { color: var(--c-primary-700); }
+  .hiw__panel-body { margin-top: 12px; color: var(--c-neutral-900); }
+
+  .hiw__cta { margin-top: clamp(40px, 5vw, 64px); }
+
+  @media (max-width: 900px) {
+    .hiw__grid { grid-template-columns: 1fr; justify-items: center; }
+    .hiw__steps { justify-items: start; width: 100%; }
+    .hiw__step { text-align: left; }
+    .hiw__panels { min-height: 160px; width: 100%; }
+    .hiw__panel { position: relative; display: none; }
+    .hiw__panel.is-active { display: block; }
+  }
+</style>
