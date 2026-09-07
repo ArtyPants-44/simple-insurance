@@ -144,58 +144,129 @@ function initNav() {
   }
 }
 
-/* ---------- 5. How-it-works scroll carousel ---------- */
-/* The section ships as a plain stacked list. Where there is room for it — a
-   wide enough, tall enough viewport, and motion is welcome — we pin the stage
-   to the viewport and let scroll position pick the step, with the outgoing and
-   incoming shots peeking from the corners. */
+/* ---------- 5. How-it-works scroll conveyor ---------- */
+/* Three stations — bottom-right (next, small), centre (current, large),
+   top-left (previous, small). Every card travels the whole path, so step 2
+   grows out of the bottom-right corner as step 1 shrinks into the top-left.
+   A dwell at each end of a segment gives the snap: the card sits still at
+   centre for a beat, then moves quickly to the next station.
+
+   The section still ships as a plain stacked list; this only takes over when
+   there is room for it and the user has not asked for reduced motion. */
 function initStepper() {
   const root = document.querySelector("[data-stepper]");
   if (!root) return;
 
   const track = root.querySelector("[data-step-track]");
-  const slides = [...root.querySelectorAll("[data-step-slide]")];
+  const frame = root.querySelector("[data-step-frame]");
+  const cards = [...root.querySelectorAll("[data-step-card]")];
+  const copies = [...root.querySelectorAll("[data-step-copy]")];
   const triggers = [...root.querySelectorAll("[data-step-trigger]")];
-  const prevImgs = [...root.querySelectorAll(".hiw__peek--prev .hiw__peek-img")];
-  const nextImgs = [...root.querySelectorAll(".hiw__peek--next .hiw__peek-img")];
 
-  const n = slides.length;
-  if (!track || !n) return;
+  const n = cards.length;
+  if (!track || !frame || n < 2) return;
 
   root.style.setProperty("--hiw-steps", String(n));
 
-  let current = -1;
+  const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
 
+  /* --- where the corner stations sit, in px from the frame centre --- */
+  const CORNER_SCALE = 0.19;
+  let geom = null;
+
+  const measure = () => {
+    const fw = frame.clientWidth;
+    const fh = frame.clientHeight;
+    const cw = cards[0].offsetWidth;
+    const ch = cards[0].offsetHeight;
+    if (!fw || !fh || !cw || !ch) return (geom = null);
+    // A card is centred on the frame, so a station offset is the distance
+    // from that centre to where the shrunken card's own centre should land.
+    const halfW = (cw * CORNER_SCALE) / 2;
+    const halfH = (ch * CORNER_SCALE) / 2;
+    geom = {
+      tlx: halfW - fw / 2,
+      tly: halfH - fh / 2,
+      brx: fw / 2 - halfW,
+      bry: fh / 2 - halfH,
+    };
+  };
+
+  let current = -1;
   const select = (i) => {
     if (i === current) return;
     current = i;
-
-    slides.forEach((s, k) => s.classList.toggle("is-active", k === i));
     triggers.forEach((t, k) => {
       t.classList.toggle("is-active", k === i);
       if (k === i) t.setAttribute("aria-current", "step");
       else t.removeAttribute("aria-current");
     });
+  };
 
-    // Corner cards wrap around so both are always filled.
-    const prev = (i - 1 + n) % n;
-    const next = (i + 1) % n;
-    prevImgs.forEach((im, k) => im.classList.toggle("is-active", k === prev));
-    nextImgs.forEach((im, k) => im.classList.toggle("is-active", k === next));
+  /* flow is a continuous station index: 0 = card 0 centred, 1 = card 1
+     centred, and so on. pos = flow - i is where card i sits right now:
+     0 centre, +1 top-left, -1 bottom-right. */
+  const render = (flow) => {
+    if (!geom) return;
+
+    cards.forEach((card, i) => {
+      const pos = flow - i;
+      const a = Math.min(Math.abs(pos), 1);
+      const scale = 1 + (CORNER_SCALE - 1) * a;
+      const dx = a * (pos > 0 ? geom.tlx : geom.brx);
+      const dy = a * (pos > 0 ? geom.tly : geom.bry);
+
+      card.style.transform =
+        `translate(-50%, -50%) translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${scale.toFixed(4)})`;
+      // Cards more than a station away have nowhere to be — fade them out
+      // rather than stacking them in a corner.
+      card.style.opacity = clamp((1.55 - Math.abs(pos)) / 0.55, 0, 1).toFixed(3);
+      card.style.zIndex = String(50 - Math.round(Math.abs(pos) * 10));
+    });
+
+    copies.forEach((copy, i) => {
+      const pos = flow - i;
+      copy.style.opacity = clamp(1 - Math.abs(pos) * 2.4, 0, 1).toFixed(3);
+      copy.style.transform = `translateY(${(pos * 18).toFixed(1)}px)`;
+    });
+
+    select(clamp(Math.round(flow), 0, n - 1));
+  };
+
+  /* --- stacked mode: a gentle scale-up as each card nears the middle --- */
+  const renderStacked = () => {
+    const vh = window.innerHeight;
+    cards.forEach((card) => {
+      const r = card.getBoundingClientRect();
+      const dist = Math.abs(r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
+      card.style.transform = `scale(${(0.93 + 0.07 * clamp(1 - dist, 0, 1)).toFixed(3)})`;
+    });
   };
 
   const runway = () => track.offsetHeight - window.innerHeight;
+
+  // Hold at each station for a beat, then move quickly — that pause is what
+  // reads as the snap.
+  const DWELL = 0.22;
+
+  const flowFromScroll = () => {
+    const total = runway();
+    if (total <= 0) return 0;
+    const scrolled = clamp(-track.getBoundingClientRect().top, 0, total);
+    const raw = (scrolled / total) * (n - 1);
+    const seg = Math.min(Math.floor(raw), n - 2);
+    const f = raw - seg;
+    const t = clamp((f - DWELL) / (1 - 2 * DWELL), 0, 1);
+    return seg + t * t * (3 - 2 * t); // smoothstep
+  };
 
   let pinned = false;
   let ticking = false;
 
   const update = () => {
     ticking = false;
-    if (!pinned) return;
-    const total = runway();
-    if (total <= 0) return;
-    const scrolled = Math.min(Math.max(-track.getBoundingClientRect().top, 0), total);
-    select(Math.min(n - 1, Math.floor((scrolled / total) * n)));
+    if (pinned) render(flowFromScroll());
+    else renderStacked();
   };
 
   const onScroll = () => {
@@ -204,55 +275,64 @@ function initStepper() {
     requestAnimationFrame(update);
   };
 
-  // Pinning a full viewport is only worth it with the room to show it, and
-  // never against the user's motion preference.
   const canPin = () =>
     !reduced &&
     window.matchMedia("(min-width: 901px)").matches &&
     window.matchMedia("(min-height: 620px)").matches;
 
+  const clearInline = () => {
+    [...cards, ...copies].forEach((el) => {
+      el.style.transform = "";
+      el.style.opacity = "";
+      el.style.zIndex = "";
+    });
+  };
+
   const setMode = () => {
     const want = canPin();
     if (want === pinned) return;
     pinned = want;
+    clearInline();
     root.classList.toggle("is-pinned", pinned);
-
-    if (pinned) {
-      window.addEventListener("scroll", onScroll, { passive: true });
-      current = -1;
+    current = -1;
+    // Reading layout after the class flip, so the new sizes are in place.
+    requestAnimationFrame(() => {
+      if (pinned) measure();
       update();
-      if (current === -1) select(0);
-    } else {
-      window.removeEventListener("scroll", onScroll);
-      // Stacked again: every step stands on its own, so drop the selection.
-      slides.forEach((s) => s.classList.remove("is-active"));
-      current = -1;
-    }
+    });
   };
 
   triggers.forEach((t, i) => {
     t.addEventListener("click", () => {
       if (!pinned) {
-        slides[i].scrollIntoView({ behavior: "smooth", block: "center" });
+        cards[i].scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
       const total = runway();
       if (total <= 0) return;
       const top = track.getBoundingClientRect().top + window.scrollY;
-      // Aim for the middle of that step's band so it does not sit on a seam.
-      window.scrollTo({ top: top + ((i + 0.5) / n) * total, behavior: "smooth" });
+      // flow === i sits at raw === i, i.e. the middle of that station's dwell.
+      window.scrollTo({ top: top + (i / (n - 1)) * total, behavior: "smooth" });
     });
   });
 
-  setMode();
+  window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener(
     "resize",
     () => {
       setMode();
+      if (pinned) measure();
       onScroll();
     },
     { passive: true }
   );
+  // Card heights are viewport-derived, so re-measure once images have laid out.
+  window.addEventListener("load", () => {
+    if (pinned) measure();
+    onScroll();
+  });
+
+  setMode();
 }
 
 /* ---------- 6. Counter roll-up for Our Numbers ---------- */
