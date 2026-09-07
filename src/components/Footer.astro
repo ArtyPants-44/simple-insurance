@@ -25,10 +25,15 @@ const explore = [
 ];
 
 const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL;
 ---
 
 <footer class="foot">
-  <div class="foot__pattern" aria-hidden="true"></div>
+  <div
+    class="foot__pattern"
+    aria-hidden="true"
+    style={`--foot-pattern-src: url("${base}images/footer-bg.jpg")`}
+  ></div>
 
   <div class="container foot__inner">
     <div class="foot__cols">
@@ -126,13 +131,17 @@ const year = new Date().getFullYear();
     overflow: hidden;
   }
 
-  /* Quarter-disc field from the Figma pattern library */
+  /* Quarter-disc field — Figma export, cropped to a whole 16 x 11 grid of
+     88px cells so it tiles with no seam. Scaling the tile scales the cells
+     with it, so the motif keeps its proportions and simply gets finer on
+     narrow screens rather than showing three giant discs. */
   .foot__pattern {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='none' stroke='%23ffffff' stroke-opacity='0.028'/%3E%3Cpath d='M0 100 A100 100 0 0 1 100 0 L100 100 Z' fill='%23ffffff' fill-opacity='0.022'/%3E%3C/svg%3E");
-    background-size: 100px 100px;
+    background-image: var(--foot-pattern-src);
+    background-repeat: repeat;
+    background-size: 1408px auto;   /* 88px cells */
   }
 
   .foot__inner { position: relative; }
@@ -228,8 +237,10 @@ const year = new Date().getFullYear();
 
   @media (max-width: 900px) {
     .foot__cols { grid-template-columns: 1fr 1fr; }
+    .foot__pattern { background-size: 1056px auto; }  /* 66px cells */
   }
   @media (max-width: 540px) {
     .foot__cols { grid-template-columns: 1fr; }
+    .foot__pattern { background-size: 704px auto; }   /* 44px cells */
   }
 </style>
